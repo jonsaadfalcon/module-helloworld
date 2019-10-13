@@ -1,11 +1,12 @@
 {
-  "name": "say_hello",
+  "name": "ADefAttack",
   "options": {
-    "age": 4,
-    "gender": "M",
-    "wears_glasses": false
+    "max_iter": 100,
+    "max_norm": "inf",
+    "smooth": 1.0,
+    "sumsample": 10
   },
   "num_files": 1,
-  "files": ["name.txt"],
+  "files": ["example.jpg"],
   "tags": [{}]
 }

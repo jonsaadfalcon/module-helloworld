@@ -1,39 +1,29 @@
 {
     "functions": [
         {
-            "name": "say_hello",
+            "name": "ADefAttack",
             "options": [
                 {
-                    "name": "age", "type": "int",
+                    "name": "max_iter", "type": "int",
+                    "default": 100,
                     "required": true
                 },
                 {
-                    "name": "gender", "type": "enum",
-                    "values": ["F", "M", "Other"],
+                    "name": "max_norm", "type": "float",
+                    "default": "inf",
                     "required": true
                 },
                 {
-                    "name": "wears_glasses", "type": "bool",
-                    "required": false
-                }
-            ],
-            "extensions": [
-                {"extension": "txt"}
-            ]
-        },
-        {
-            "name": "add_number",
-            "options": [
-                {"name": "number", "type": "int", "required": true}
-            ],
-            "required_input_tags": [
-                "ftype"
-            ],
-            "extensions": [
+                    "name": "smooth", "type": "float",
+                    "default": 1.0
+                },
                 {
-                    "tags": {"ftype": "input"},
-                    "extension": "txt"
+                  "name": "sumsample", "type": "int",
+                  "default": 10
                 }
+            ],
+            "extensions": [
+                {"extension": "jpg"}
             ]
         }
     ]

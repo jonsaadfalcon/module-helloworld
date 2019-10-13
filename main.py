@@ -1,17 +1,3 @@
-from mlsploit import Job
-
-
-# Initialize the job, which will
-# load and verify all input parameters
-Job.initialize()
-
-# The job has the following data members
-# which is all that is required for running the function
-input_json = Job.input_json  # this is a dict for input.json
-function = Job.function  # this is the function name
-options = Job.options  # this is a dict of the arguments for the function
-input_files = Job.input_files  # this is a list of InputFile objects
-
 """
 Each instance in Job.input_files has the following members:
 - .path [is the filepath of the input file on disk]
@@ -26,7 +12,7 @@ Job.make_output_filepath(filename)
 ```
 Use this path only for writing the output files.
 
-After completing the function and writing the output files to disk, 
+After completing the function and writing the output files to disk,
 you need to call:
 ```
 Job.add_output_file(path, tags=None,
@@ -46,28 +32,88 @@ Job.commit_output()
 which will create the output.json appropriately
 """
 
-print('Running %s function...' % function)
-if function == 'say_hello':
-    print('Options: %s' % str(options))
-    age = options['age']
-    gender = options['gender']
-    wears_glasses = options['wears_glasses']
+# print('Running %s function...' % function)
+# if function == 'say_hello':
+#     print('Options: %s' % str(options))
+#     age = options['age']
+#     gender = options['gender']
+#     wears_glasses = options['wears_glasses']
+#
+#     for input_file in Job.input_files:
+#         print('Processing %s...' % input_file.path)
+#         f = open(input_file.path, 'r')
+#         name = f.readline().strip(' \n')
+#
+#         message = 'Hello %s' % name
+#         output_filepath = Job.make_output_filepath('greetings.txt')
+#         open(output_filepath, 'w').writelines([message])
+#         print(message)
+#
+#         tags = {'age': age}
+#
+#         Job.add_output_file(output_filepath, tags=tags, is_extra=True)
+#         Job.commit_output()
+#
+# elif function == 'add_number':
+#     # TODO
+#     pass
 
-    for input_file in Job.input_files:
-        print('Processing %s...' % input_file.path)
-        f = open(input_file.path, 'r')
-        name = f.readline().strip(' \n')
+from mlsploit import Job
 
-        message = 'Hello %s' % name
-        output_filepath = Job.make_output_filepath('greetings.txt')
-        open(output_filepath, 'w').writelines([message])
-        print(message)
 
-        tags = {'age': age}
+# Initialize the job, which will
+# load and verify all input parameters
+Job.initialize()
 
-        Job.add_output_file(output_filepath, tags=tags, is_extra=True)
+Job.input_json = {
+  "name": "ADefAttack",
+  "options": {
+    "max_iter": 100,
+    "max_norm": "inf",
+    "smooth": 1.0,
+    "sumsample": 10
+  },
+  "num_files": 1,
+  "files": ["example.jpg"],
+  "tags": [{}]
+}
+
+Job.function = "ADefAttack"
+
+Job.options = {
+    "max_iter": 100,
+    "max_norm": "inf",
+    "smooth": 1.0,
+    "sumsample": 10
+}
+
+Job.input_files = ["/mnt/input/example.jpg"]
+
+input_file_path = Job.input_files[0] # /mnt/input/image123.jpg
+image = load(input_file_path)
+
+
+for name, item in inspect.getmembers(attacks):
+  if (inspect.isclass(item)
+      and item is not Attack
+      and issubclass(item, Attack)
+      and len(item.__abstractmethods__) == 0):
+    print(name) # ADefAttack, AdditiveGaussianNoiseAttack ...
+
+    if name == Job.function:
+        # perform attack here
+        attack_class = item
+        #attack = attack_class(**Job.options)
+        attack = ADefAttack(max_iter=100, max_norm=np.inf)
+        attacked_image = attack.attack(image)
+
+        output_image_filename = os.path.basename(input_file_path) # "image123.jpg"
+        output_file_path = Job.make_output_filepath(output_image_filename) # /mnt/output/image123.jpg
+        save(attacked_image, output_file_path)
+        Job.add_output_file(
+            output_file_path, tags=None,
+            is_modified=True, is_extra=False)
+
         Job.commit_output()
-
-elif function == 'add_number':
-    # TODO
-    pass
+    else:
+        continue
